@@ -1,4 +1,4 @@
-package com.unipi.iason.erg2v1;
+package com.unipi.iason.erg2v3;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -99,7 +99,7 @@ public class Main {
             //System.out.println(json4.trim());
            /* System.out.println(json.hashCode());
             System.out.println(json4.hashCode());*/
-           // System.out.println(json.equals(json4));
+            // System.out.println(json.equals(json4));
             /*System.out.println("Is chain valid? Result: " + BlockChain.isChainValid(blockChain.blocks, prefix));
             System.out.println("Is chain2 valid? Result: " + BlockChain.isChainValid(blockChain2.blocks, prefix));*/
         }

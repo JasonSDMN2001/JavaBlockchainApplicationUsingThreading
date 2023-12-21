@@ -1,13 +1,17 @@
-package com.unipi.iason.erg2v1;
+package com.unipi.iason.erg2v2;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.unipi.iason.erg2v2.Block;
+import com.unipi.iason.erg2v2.BlockChain;
 import com.unipi.iason.DBConnection;
 import com.unipi.iason.Product;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 
 public class Main {
@@ -39,7 +43,13 @@ public class Main {
         // System.out.println("Process started");
         Block genesisBlock = new Block("0", products,
                 timeStamp);
-        genesisBlock.mineBlock(prefix);
+        try {
+            genesisBlock.mineBlock(prefix);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
         blockChain.addBlock(genesisBlock);
         //System.out.println("Node " + (blockChain.blocks.size()) + " created");
         List<Product> products2 = new ArrayList<>();
@@ -57,7 +67,13 @@ public class Main {
         Block secondBlock = new Block(blockChain.blocks.get(blockChain.blocks.size() - 1).getHash(),
                 products2,
                 timeStamp);
-        secondBlock.mineBlock(prefix);
+        try {
+            secondBlock.mineBlock(prefix);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
         blockChain.addBlock(secondBlock);
         // System.out.println("Node " + (blockChain.blocks.size()) + " created!");
         //3rd Block
@@ -75,7 +91,13 @@ public class Main {
         Block thirdBlock = new Block(blockChain.blocks.get(blockChain.blocks.size() - 1).getHash(),
                 products3,
                 timeStamp);
-        thirdBlock.mineBlock(prefix);
+        try {
+            thirdBlock.mineBlock(prefix);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
         blockChain.addBlock(thirdBlock);
         //System.out.println("Node " + (blockChain.blocks.size()) + " created!");
         /*if(!BlockChain.isChainValid(blockChain.blocks, prefix))
@@ -86,8 +108,8 @@ public class Main {
         System.out.println(json);*/
         DBConnection dbConnection = new DBConnection();
         //dbConnection.createTableAndData();
-        dbConnection.insertNewProduct(1, json);
-        String results = dbConnection.selectAll(1);
+        dbConnection.insertNewProduct(2, json);
+        String results = dbConnection.selectAll(2);
         /*System.out.println(json.length());
         System.out.println(results.length());*/
         BlockChain blockChain2 = null;
@@ -96,11 +118,11 @@ public class Main {
             String json4 = new GsonBuilder().setPrettyPrinting().create().toJson(blockChain2);
             //System.out.println("The 2nd blockChain:");
             //System.out.println(json.trim());
-            //System.out.println(json4.trim());
+             //System.out.println(json4.trim());
            /* System.out.println(json.hashCode());
-            System.out.println(json4.hashCode());*/
-           // System.out.println(json.equals(json4));
-            /*System.out.println("Is chain valid? Result: " + BlockChain.isChainValid(blockChain.blocks, prefix));
+            System.out.println(json4.hashCode());
+            System.out.println(json.equals(json4));
+            System.out.println("Is chain valid? Result: " + BlockChain.isChainValid(blockChain.blocks, prefix));
             System.out.println("Is chain2 valid? Result: " + BlockChain.isChainValid(blockChain2.blocks, prefix));*/
         }
 
