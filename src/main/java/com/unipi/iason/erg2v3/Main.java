@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.unipi.iason.DBConnection;
 import com.unipi.iason.Product;
+import com.unipi.iason.erg2v3.Block;
+import com.unipi.iason.erg2v3.BlockChain;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -39,7 +41,12 @@ public class Main {
         // System.out.println("Process started");
         Block genesisBlock = new Block("0", products,
                 timeStamp);
+        long startTime = System.currentTimeMillis();
         genesisBlock.mineBlock(prefix);
+        long endTime = System.currentTimeMillis();
+        long timeElapsed = endTime - startTime;
+        double timeInMinutes = (double) timeElapsed / 60000;
+        System.out.println("Block 1 Execution time in minutes: " + timeInMinutes);
         blockChain.addBlock(genesisBlock);
         //System.out.println("Node " + (blockChain.blocks.size()) + " created");
         List<Product> products2 = new ArrayList<>();
@@ -57,7 +64,12 @@ public class Main {
         Block secondBlock = new Block(blockChain.blocks.get(blockChain.blocks.size() - 1).getHash(),
                 products2,
                 timeStamp);
+        long startTime2 = System.currentTimeMillis();
         secondBlock.mineBlock(prefix);
+        long endTime2 = System.currentTimeMillis();
+        long timeElapsed2 = endTime2 - startTime2;
+        double timeInMinutes2 = (double) timeElapsed2 / 60000;
+        System.out.println("Block 2 Execution time in minutes: " + timeInMinutes2);
         blockChain.addBlock(secondBlock);
         // System.out.println("Node " + (blockChain.blocks.size()) + " created!");
         //3rd Block
@@ -75,7 +87,12 @@ public class Main {
         Block thirdBlock = new Block(blockChain.blocks.get(blockChain.blocks.size() - 1).getHash(),
                 products3,
                 timeStamp);
+        long startTime3 = System.currentTimeMillis();
         thirdBlock.mineBlock(prefix);
+        long endTime3 = System.currentTimeMillis();
+        long timeElapsed3 = endTime3 - startTime3;
+        double timeInMinutes3 = (double) timeElapsed3 / 60000;
+        System.out.println("Block 3 Execution time in minutes: " + timeInMinutes3);
         blockChain.addBlock(thirdBlock);
         //System.out.println("Node " + (blockChain.blocks.size()) + " created!");
         /*if(!BlockChain.isChainValid(blockChain.blocks, prefix))
