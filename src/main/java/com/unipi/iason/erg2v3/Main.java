@@ -13,7 +13,7 @@ import java.util.List;
 
 
 public class Main {
-    public static final int prefix = 1;
+    public static final int prefix = 5;
     public static final long timeStamp = new Date().getTime();
     public static void main(String[] args) {
         BlockChain blockChain = new BlockChain();
