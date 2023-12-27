@@ -78,8 +78,8 @@ public class Block {
 
         @Override
         public void run() {
-            for (int nonce = startNonce; nonce < endNonce; nonce++) {
-                n = nonce;
+            for (int num = startNonce; num < endNonce; num++) {
+                n = num;
                 String hash = calculateBlockHash();
                 if (hash.substring(0, prefix).equals(prefixString)) {
                     // If a valid hash is found, set it and return
@@ -96,11 +96,11 @@ public class Block {
         int numThreads = Runtime.getRuntime().availableProcessors();
         Thread[] threads = new Thread[numThreads];
 
-        int nonceRange = Integer.MAX_VALUE / numThreads;
+        int nRange = Integer.MAX_VALUE / numThreads;
         for (int i = 0; i < numThreads; i++) {
-            int startNonce = i * nonceRange;
-            int endNonce = (i + 1) * nonceRange;
-            threads[i] = new Thread(new MiningTask(startNonce, endNonce, prefix));
+            int startN = i * nRange;
+            int endN = (i + 1) * nRange;
+            threads[i] = new Thread(new MiningTask(startN, endN, prefix));
             threads[i].start();
         }
 

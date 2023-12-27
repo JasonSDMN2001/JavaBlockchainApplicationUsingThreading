@@ -1,7 +1,9 @@
 package com.unipi.iason.erg2bench;
 
 import com.unipi.iason.Product;
-import com.unipi.iason.erg2v1.Block;
+//import com.unipi.iason.erg2v2.Block;
+//import com.unipi.iason.erg2v1.Block;
+import com.unipi.iason.erg2v3.Block;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
 import org.openjdk.jmh.runner.Runner;
@@ -12,12 +14,13 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
-@Fork(value = 2)
+@Fork(value = 1)
 @Warmup(iterations = 1)
 @Measurement(iterations = 4)
 public class BlockBenchmark {
@@ -31,7 +34,7 @@ public class BlockBenchmark {
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
                 .include(BlockBenchmark.class.getSimpleName())
-                .threads(8)
+                .threads(Runtime.getRuntime().availableProcessors())
                 .forks(1)
                 .build();
 
@@ -56,7 +59,7 @@ public class BlockBenchmark {
     }
 
     @Benchmark
-    public void mineBlockBenchmark(Blackhole bh) {
+    public void mineBlockBenchmark(Blackhole bh) throws ExecutionException, InterruptedException {
         // Benchmark the mineBlock method with different prefixes
         for (int i = 0; i < N; i++) {
             block.mineBlock(i);

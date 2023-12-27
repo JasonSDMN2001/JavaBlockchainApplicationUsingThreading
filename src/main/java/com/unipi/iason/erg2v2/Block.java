@@ -71,8 +71,8 @@ public class Block {
 
         @Override
         public String call() {
-            for (int nonce = startNonce; nonce < endNonce; nonce++) {
-                n = nonce;
+            for (int num = startNonce; num < endNonce; num++) {
+                n = num;
                 String hash = calculateBlockHash();
                 if (hash.substring(0, prefix).equals(prefixString)) {
                     return hash;
@@ -87,11 +87,11 @@ public class Block {
         ExecutorService executor = Executors.newFixedThreadPool(numThreads);
         List<Future<String>> futures = new ArrayList<>();
 
-        int nonceRange = Integer.MAX_VALUE / numThreads;
+        int nRange = Integer.MAX_VALUE / numThreads;
         for (int i = 0; i < numThreads; i++) {
-            int startNonce = i * nonceRange;
-            int endNonce = (i + 1) * nonceRange;
-            futures.add(executor.submit(new MiningTask(startNonce, endNonce, prefix)));
+            int startN = i * nRange;
+            int endN = (i + 1) * nRange;
+            futures.add(executor.submit(new MiningTask(startN, endN, prefix)));
         }
 
         String validHash = null;

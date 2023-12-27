@@ -118,7 +118,7 @@ public class Main {
             String json4 = new GsonBuilder().setPrettyPrinting().create().toJson(blockChain2);
             //System.out.println("The 2nd blockChain:");
             //System.out.println(json.trim());
-             //System.out.println(json4.trim());
+            //System.out.println(json4.trim());
            /* System.out.println(json.hashCode());
             System.out.println(json4.hashCode());
             System.out.println(json.equals(json4));
