@@ -56,53 +56,53 @@ public class Block {
     public List<Product> getProducts() {
         return products;
     }
-    class MiningTask implements Callable<String> {
-        private int startNonce;
-        private int endNonce;
+    class MiningTask implements Runnable {
+        private int startN;
+        private int endN;
         private int prefix;
         private String prefixString;
 
-        public MiningTask(int startNonce, int endNonce, int prefix) {
-            this.startNonce = startNonce;
-            this.endNonce = endNonce;
+        public MiningTask(int startN, int endN, int prefix) {
+            this.startN = startN;
+            this.endN = endN;
             this.prefix = prefix;
             this.prefixString = new String(new char[prefix]).replace('\0', '0');
         }
 
         @Override
-        public String call() {
-            for (int num = startNonce; num < endNonce; num++) {
+        public void run() {
+            for (int num = startN; num < endN; num++) {
                 n = num;
                 String hash = calculateBlockHash();
                 if (hash.substring(0, prefix).equals(prefixString)) {
-                    return hash;
+                    // If a valid hash is found, set it and return
+                    synchronized (Block.this) {
+                        Block.this.hash = hash;
+                    }
+                    return;
                 }
             }
-            return null;
         }
     }
 
-    public String mineBlock(int prefix) throws InterruptedException, ExecutionException {
+    public void mineBlock(int prefix) {
         int numThreads = Runtime.getRuntime().availableProcessors();
-        ExecutorService executor = Executors.newFixedThreadPool(numThreads);
-        List<Future<String>> futures = new ArrayList<>();
+        Thread[] threads = new Thread[numThreads];
 
         int nRange = Integer.MAX_VALUE / numThreads;
         for (int i = 0; i < numThreads; i++) {
             int startN = i * nRange;
             int endN = (i + 1) * nRange;
-            futures.add(executor.submit(new MiningTask(startN, endN, prefix)));
+            threads[i] = new Thread(new MiningTask(startN, endN, prefix));
+            threads[i].start();
         }
 
-        String validHash = null;
-        for (Future<String> future : futures) {
-            validHash = future.get();
-            if (validHash != null) {
-                break;
+        for (Thread thread : threads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
-
-        executor.shutdownNow();
-        return validHash;
     }
 }

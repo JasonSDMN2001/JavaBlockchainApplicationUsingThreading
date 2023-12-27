@@ -6,6 +6,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.locks.ReentrantLock;
+
 public class Block {
     //the data
     private List<Product> products;
@@ -63,53 +66,63 @@ public class Block {
         return products;
     }
 
-    class MiningTask implements Runnable {
-        private int startNonce;
-        private int endNonce;
-        private int prefix;
-        private String prefixString;
 
-        public MiningTask(int startNonce, int endNonce, int prefix) {
-            this.startNonce = startNonce;
-            this.endNonce = endNonce;
-            this.prefix = prefix;
-            this.prefixString = new String(new char[prefix]).replace('\0', '0');
-        }
+class MiningTask extends Thread {
+    private int startN;
+    private int endN;
+    private int prefix;
+    private String prefixString;
+    private ReentrantLock lock;
+    private CountDownLatch latch;
 
-        @Override
-        public void run() {
-            for (int num = startNonce; num < endNonce; num++) {
-                n = num;
-                String hash = calculateBlockHash();
-                if (hash.substring(0, prefix).equals(prefixString)) {
-                    // If a valid hash is found, set it and return
-                    synchronized (Block.this) {
-                        Block.this.hash = hash;
-                    }
-                    return;
+    public MiningTask(int startN, int endN, int prefix, ReentrantLock lock, CountDownLatch latch) {
+        this.startN = startN;
+        this.endN = endN;
+        this.prefix = prefix;
+        this.prefixString = new String(new char[prefix]).replace('\0', '0');
+        this.lock = lock;
+        this.latch = latch;
+    }
+
+    @Override
+    public void run() {
+        for (int num = startN; num < endN; num++) {
+            n = num;
+            String hash = calculateBlockHash();
+            if (hash.substring(0, prefix).equals(prefixString)) {
+                // If a valid hash is found, set it and return
+                lock.lock();
+                try {
+                    Block.this.hash = hash;
+                } finally {
+                    lock.unlock();
                 }
+                latch.countDown();
+                return;
             }
         }
+        latch.countDown();
+    }
+}
+
+public void mineBlock(int prefix) {
+    int numThreads = Runtime.getRuntime().availableProcessors();
+    Thread[] threads = new Thread[numThreads];
+    ReentrantLock lock = new ReentrantLock();
+    CountDownLatch latch = new CountDownLatch(numThreads);
+
+    int nRange = Integer.MAX_VALUE / numThreads;
+    for (int i = 0; i < numThreads; i++) {
+        int startN = i * nRange;
+        int endN = (i + 1) * nRange;
+        threads[i] = new MiningTask(startN, endN, prefix, lock, latch);
+        threads[i].start();
     }
 
-    public void mineBlock(int prefix) {
-        int numThreads = Runtime.getRuntime().availableProcessors();
-        Thread[] threads = new Thread[numThreads];
-
-        int nRange = Integer.MAX_VALUE / numThreads;
-        for (int i = 0; i < numThreads; i++) {
-            int startN = i * nRange;
-            int endN = (i + 1) * nRange;
-            threads[i] = new Thread(new MiningTask(startN, endN, prefix));
-            threads[i].start();
-        }
-
-        for (Thread thread : threads) {
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
+    try {
+        latch.await();
+    } catch (InterruptedException e) {
+        throw new RuntimeException(e);
     }
+}
 }
