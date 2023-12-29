@@ -31,12 +31,10 @@ public class DBConnection {
             ResultSet resultSet = statement.executeQuery(selectSQL);
             while(resultSet.next()){
                 String product = resultSet.getString("PRODUCT");
-                //System.out.println(product);
                 resultStringBuilder.append(product);
             }
             statement.close();
             connection.close();
-            //System.out.println("Done!");
             return resultStringBuilder.toString();
         } catch (SQLException ex) {
             Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
@@ -51,35 +49,6 @@ public class DBConnection {
                     + "PRODUCT VARCHAR(255) NOT NULL)";
             Statement statement = connection.createStatement();
             statement.executeUpdate(createTableSQL);
-            //String insertSQL = "INSERT INTO PRODUCTS VALUES(1,'product1')";
-           /* statement.executeUpdate(insertSQL);
-            statement.close();
-            connection.close();
-            System.out.println("Done!");
-            CREATE TABLE "BlockChain" (
-	"Id"	INTEGER NOT NULL,
-	"Blocks"	BLOB NOT NULL,
-	PRIMARY KEY("Id")
-);
-CREATE TABLE "Blocks" (
-	"Id"	INTEGER NOT NULL,
-	"Products"	BLOB NOT NULL,
-	"PreviousHash"	TEXT NOT NULL,
-	"Timestamp"	NUMERIC NOT NULL,
-	"n"	NUMERIC,
-	PRIMARY KEY("Id")
-);
-CREATE TABLE "Products" (
-	"Id"	INTEGER NOT NULL,
-	"Code"	TEXT,
-	"tittle"	TEXT,
-	"timestamp"	NUMERIC,
-	"price"	INTEGER,
-	"descreption"	TEXT,
-	"category"	TEXT,
-	"prevId"	INTEGER,
-	PRIMARY KEY("Id")
-);*/
         } catch (SQLException ex) {
             Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
         }

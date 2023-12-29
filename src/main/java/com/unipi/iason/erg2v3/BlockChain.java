@@ -2,18 +2,39 @@ package com.unipi.iason.erg2v3;
 import com.unipi.iason.Product;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+
 public class BlockChain {
     public List<Block> blocks;
     public BlockChain() {
         blocks = new ArrayList<>();
     }
 
+    //can add multiple products from the beginning
     public void addBlock(Block block) {
         if (blocks.isEmpty()) {
             blocks.add(block);
-        } else {
+        } /*else {
             Block previousBlock = blocks.get(blocks.size() - 1);
+            blocks.add(block);
+        }*/else {
+            Block previousBlock = blocks.get(blocks.size() - 1);
+            List<Product> previousProducts = previousBlock.getProducts();
+            List<Product> currentProducts = block.getProducts();
+
+            //checking for id's to be ascending
+            for (int i = 0; i < currentProducts.size(); i++) {
+                if (i > 0 && currentProducts.get(i).getId() <= currentProducts.get(i - 1).getId()) {
+                    System.out.println("cant add block cause products dont have ascending id's");
+                    return;
+                }
+                if (!previousProducts.isEmpty() && currentProducts.get(i).getId() <= previousProducts.get(previousProducts.size() - 1).getId()) {
+                    System.out.println("cant add block cause products dont have ascending id's");
+                    return;
+                }
+            }
             blocks.add(block);
         }
     }
@@ -33,22 +54,26 @@ public class BlockChain {
             for (Product product : block.getProducts()) {
                 if (product.getTitle().contains(criteria)) {
                     foundProducts.add(product);
+                }else if(product.getCategory().contains(criteria)){
+                    foundProducts.add(product);
+                }else if(product.getDescription().contains(criteria)){
+                    foundProducts.add(product);
                 }
             }
         }
         return foundProducts;
     }
 
-    public List<Product> getProductStatistics(int productId) {
-        List<Product> statistics = new ArrayList<>();
+    // could take each product's price and timestamp,and make a graph
+    public void getProductStatistics(String title) {
         for (Block block : blocks) {
             for (Product product : block.getProducts()) {
-                if (product.getId() == productId) {
-                    statistics.add(product);
+                if (Objects.equals(product.getTitle(), title)) {
+                    System.out.println("Timestamp: " + new Date( product.getTimestamp()));
+                    System.out.println("Product Price: " + product.getPrice());
                 }
             }
         }
-        return statistics;
     }
     public static boolean isChainValid(List<Block> blocks, int prefix){
         Block currentBlock;

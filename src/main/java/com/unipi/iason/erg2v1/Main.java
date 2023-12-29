@@ -11,7 +11,7 @@ import java.util.List;
 
 
 public class Main {
-    public static final int prefix = 5;
+    public static final int prefix = 1;
     public static final long timeStamp = new Date().getTime();
     public static void main(String[] args) {
         BlockChain blockChain = new BlockChain();
@@ -19,7 +19,7 @@ public class Main {
         Product p1 = new Product.Builder(1)
                 .productCode("1234")
                 .title("Title1")
-                .timestamp(timeStamp)
+                .timestamp(new Date().getTime())
                 .price(10.0).
                 description("Description1")
                 .category("Category1")
@@ -36,7 +36,6 @@ public class Main {
                 .build();
         products.add(p1);
         products.add(p2);
-        // System.out.println("Process started");
         Block genesisBlock = new Block("0", products,
                 timeStamp);
         long startTime = System.currentTimeMillis();
@@ -46,11 +45,10 @@ public class Main {
         double timeInMinutes = (double) timeElapsed / 60000;
         System.out.println("Block 1 Execution time in minutes: " + timeInMinutes);
         blockChain.addBlock(genesisBlock);
-        //System.out.println("Node " + (blockChain.blocks.size()) + " created");
         List<Product> products2 = new ArrayList<>();
         Product p3 = new Product.Builder(3)
                 .productCode("1236")
-                .title("Title3")
+                .title("Title1")
                 .timestamp(timeStamp)
                 .price(30.0).
                 description("Description3")
@@ -69,16 +67,15 @@ public class Main {
         double timeInMinutes2 = (double) timeElapsed2 / 60000;
         System.out.println("Block 2 Execution time in minutes: " + timeInMinutes2);
         blockChain.addBlock(secondBlock);
-        // System.out.println("Node " + (blockChain.blocks.size()) + " created!");
         //3rd Block
         List<Product> products3 = new ArrayList<>();
         Product p4 = new Product.Builder(4)
                 .productCode("1237")
-                .title("Title4")
-                .timestamp(timeStamp)
+                .title("Title1")
+                .timestamp(new Date().getTime())
                 .price(40.0).
                 description("Description4")
-                .category("Category4")
+                .category("Category3")
                 .previousProductId(3)
                 .build();
         products3.add(p4);
@@ -92,39 +89,27 @@ public class Main {
         double timeInMinutes3 = (double) timeElapsed3 / 60000;
         System.out.println("Block 3 Execution time in minutes: " + timeInMinutes3);
         blockChain.addBlock(thirdBlock);
-        //System.out.println("Node " + (blockChain.blocks.size()) + " created!");
-        /*if(!BlockChain.isChainValid(blockChain.blocks, prefix))
-            return;*/
-        //Transform into Json
         String json = new GsonBuilder().setPrettyPrinting().create().toJson(blockChain);
-        /*System.out.println("The blockChain:");
-        System.out.println(json);*/
         DBConnection dbConnection = new DBConnection();
         //dbConnection.createTableAndData();
         dbConnection.insertNewProduct(1, json);
         String results = dbConnection.selectAll(1);
-        /*System.out.println(json.length());
-        System.out.println(results.length());*/
         BlockChain blockChain2 = null;
         if (results != null) {
             blockChain2 = new Gson().fromJson(results.trim(), BlockChain.class);
             String json4 = new GsonBuilder().setPrettyPrinting().create().toJson(blockChain2);
-            //System.out.println("The 2nd blockChain:");
-            //System.out.println(json.trim());
-            //System.out.println(json4.trim());
-           /* System.out.println(json.hashCode());
-            System.out.println(json4.hashCode());*/
-           // System.out.println(json.equals(json4));
-            /*System.out.println("Is chain valid? Result: " + BlockChain.isChainValid(blockChain.blocks, prefix));
-            System.out.println("Is chain2 valid? Result: " + BlockChain.isChainValid(blockChain2.blocks, prefix));*/
         }
 
         String json2 = new GsonBuilder().setPrettyPrinting().create().toJson(blockChain2.getAllProducts());
         System.out.println("All products: ");
         System.out.println(json2);
 
-        String json3 = new GsonBuilder().setPrettyPrinting().create().toJson(blockChain2.searchProduct("Title1"));
+        String json3 = new GsonBuilder().setPrettyPrinting().create().toJson(blockChain2.searchProduct("Category3"));
+        //will print more than one product
         System.out.println("Search for: ");
         System.out.println(json3);
+
+        System.out.println("Product statistics for Title1: ");
+        blockChain2.getProductStatistics("Title1");
     }
 }

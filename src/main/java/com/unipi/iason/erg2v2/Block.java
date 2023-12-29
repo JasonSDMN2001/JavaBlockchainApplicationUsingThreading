@@ -68,15 +68,14 @@ public class Block {
             this.prefix = prefix;
             this.prefixString = new String(new char[prefix]).replace('\0', '0');
         }
-
+        //on run we will try to find the hash
         @Override
         public void run() {
             for (int num = startN; num < endN; num++) {
                 n = num;
                 String hash = calculateBlockHash();
                 if (hash.substring(0, prefix).equals(prefixString)) {
-                    // If a valid hash is found, set it and return
-                    synchronized (Block.this) {
+                    synchronized (Block.this) { //locking the block using synchronized
                         Block.this.hash = hash;
                     }
                     return;
@@ -89,7 +88,7 @@ public class Block {
         int numThreads = Runtime.getRuntime().availableProcessors();
         Thread[] threads = new Thread[numThreads];
 
-        int nRange = Integer.MAX_VALUE / numThreads;
+        int nRange = Integer.MAX_VALUE / numThreads; //give each thread a range of n,equally
         for (int i = 0; i < numThreads; i++) {
             int startN = i * nRange;
             int endN = (i + 1) * nRange;
@@ -99,7 +98,7 @@ public class Block {
 
         for (Thread thread : threads) {
             try {
-                thread.join();
+                thread.join(); //wait for all threads to finish
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

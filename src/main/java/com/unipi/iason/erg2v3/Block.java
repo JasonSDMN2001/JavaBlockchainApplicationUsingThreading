@@ -84,18 +84,18 @@ class MiningTask extends Thread {
         this.latch = latch;
     }
 
+    //on run we will try to find the hash
     @Override
     public void run() {
         for (int num = startN; num < endN; num++) {
             n = num;
             String hash = calculateBlockHash();
             if (hash.substring(0, prefix).equals(prefixString)) {
-                // If a valid hash is found, set it and return
-                lock.lock();
+                lock.lock(); //lock the n
                 try {
                     Block.this.hash = hash;
                 } finally {
-                    lock.unlock();
+                    lock.unlock(); //unlock
                 }
                 latch.countDown();
                 return;
@@ -109,16 +109,15 @@ public void mineBlock(int prefix) {
     int numThreads = Runtime.getRuntime().availableProcessors();
     Thread[] threads = new Thread[numThreads];
     ReentrantLock lock = new ReentrantLock();
-    CountDownLatch latch = new CountDownLatch(numThreads);
+    CountDownLatch latch = new CountDownLatch(numThreads); //barrier, if they all finish then continue
 
     int nRange = Integer.MAX_VALUE / numThreads;
     for (int i = 0; i < numThreads; i++) {
-        int startN = i * nRange;
+        int startN = i * nRange; //give each thread a range of n,equally
         int endN = (i + 1) * nRange;
         threads[i] = new MiningTask(startN, endN, prefix, lock, latch);
         threads[i].start();
     }
-
     try {
         latch.await();
     } catch (InterruptedException e) {
