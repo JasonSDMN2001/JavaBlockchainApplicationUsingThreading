@@ -15,7 +15,7 @@ import java.util.concurrent.ExecutionException;
 
 
 public class Main {
-    public static final int prefix = 5;
+    public static final int prefix = 1;
     public static final long timeStamp = new Date().getTime();
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         BlockChain blockChain = new BlockChain();
@@ -96,8 +96,8 @@ public class Main {
         String json = new GsonBuilder().setPrettyPrinting().create().toJson(blockChain);
         DBConnection dbConnection = new DBConnection();
         //dbConnection.createTableAndData();
-        dbConnection.insertNewProduct(1, json);
-        String results = dbConnection.selectAll(1);
+        dbConnection.insertNewProduct(2, json);
+        String results = dbConnection.selectAll(2);
         BlockChain blockChain2 = null;
         if (results != null) {
             blockChain2 = new Gson().fromJson(results.trim(), BlockChain.class);

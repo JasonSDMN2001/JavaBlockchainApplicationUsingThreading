@@ -19,7 +19,7 @@ public class Main {
         Product p1 = new Product.Builder(1)
                 .productCode("1234")
                 .title("Title1")
-                .timestamp(new Date().getTime())
+                .timestamp(timeStamp)
                 .price(10.0).
                 description("Description1")
                 .category("Category1")
@@ -72,7 +72,7 @@ public class Main {
         Product p4 = new Product.Builder(4)
                 .productCode("1237")
                 .title("Title1")
-                .timestamp(new Date().getTime())
+                .timestamp(timeStamp)
                 .price(40.0).
                 description("Description4")
                 .category("Category3")

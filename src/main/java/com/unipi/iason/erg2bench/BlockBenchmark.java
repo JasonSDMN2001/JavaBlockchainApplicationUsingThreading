@@ -43,7 +43,7 @@ public class BlockBenchmark {
 
     @Setup
     public void setup() {
-        // Initialize your Block object here with a single Product
+        // every block has 1 product
         List<Product> data = new ArrayList<>();
         Product product = new Product.Builder(1)
                 .productCode("1234")
@@ -60,7 +60,7 @@ public class BlockBenchmark {
 
     @Benchmark
     public void mineBlockBenchmark(Blackhole bh) throws ExecutionException, InterruptedException {
-        // Benchmark the mineBlock method with different prefixes
+        //mineBlock with different prefixes
         for (int i = 0; i < N; i++) {
             block.mineBlock(i);
             bh.consume(block);
