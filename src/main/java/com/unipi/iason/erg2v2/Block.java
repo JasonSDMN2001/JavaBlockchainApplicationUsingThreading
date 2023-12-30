@@ -75,7 +75,7 @@ public class Block {
                 n = num;
                 String hash = calculateBlockHash();
                 if (hash.substring(0, prefix).equals(prefixString)) {
-                    synchronized (Block.this) { //locking the block using synchronized
+                    synchronized (Block.this) { //lockin.g the block using synchronized
                         Block.this.hash = hash;
                     }
                     return;

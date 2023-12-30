@@ -2,8 +2,8 @@ package com.unipi.iason.erg2bench;
 
 import com.unipi.iason.Product;
 //import com.unipi.iason.erg2v2.Block;
-//import com.unipi.iason.erg2v1.Block;
-import com.unipi.iason.erg2v3.Block;
+import com.unipi.iason.erg2v1.Block;
+//import com.unipi.iason.erg2v3.Block;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
 import org.openjdk.jmh.runner.Runner;
